@@ -5,13 +5,37 @@ def nexusPath = project.properties['fede.nexus.path']
 def nexusUname = System.getenv( 'nexus_username' )
 def nexusPwd = System.getenv( 'nexus_pw' )
 
-jar {
-    from (project.properties['fede.depJars.ets']) {
-                     include '*.jar' 
-    }
-    
+
+sourceSets {
+   main {
+      java {
+         srcDir 'src'
+      }
+   }
+	
+   test {
+      java {
+         srcDir 'test'
+      }
+   }
 }
 
+
+
+repositories {
+   jcenter()
+}
+
+dependencies {
+   compile 'org.slf4j:slf4j-api:1.7.12'
+   testCompile 'junit:junit:4.12'
+}
+
+jar {
+   manifest {
+      attributes 'Main-Class': 'com.example.main.Application'
+   }
+}
 
 //task for Sonatype Nexus OSS
 uploadArchives {
