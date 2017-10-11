@@ -1,37 +1,29 @@
+apply plugin: 'maven'
 apply plugin: 'java'
-apply plugin: 'application'
 
-repositories {
-    mavenCentral()
+def nexusPath = project.properties['fede.nexus.path']
+def nexusUname = System.getenv( 'nexus_username' )
+def nexusPwd = System.getenv( 'nexus_pw' )
+
+jar {
+    from (project.properties['fede.depJars.ets']) {
+                     include '*.jar' 
+    }
+    
 }
 
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main/java'
+
+//task for Sonatype Nexus OSS
+uploadArchives {
+    repositories {
+        mavenDeployer {
+        pom.artifactId='ETS_COTS'
+        pom.groupId= 'abc.xyz.test'
+        pom.version= '9.0.0.1'
+
+            repository (url: nexusPath) {
+                authentication(userName: nexusUname, password: nexusPwd)
+           }
         }
     }
-
-    test {
-        java {
-            srcDir 'src/test/java'
-        }
-    }
 }
-
-dependencies {
-    testCompile 'junit:junit:4.11'
-}
-
-test {
-    testLogging {
-        events "passed", "skipped", "failed", "standardOut", "standardError"
-    }
-}
-
-// create Gradle wrapper with command line `gradle wrapper` in terminal
-/*task wrapper(type: Wrapper) {
-    gradleVersion = '1.12'
-}
-*/
-mainClassName = "Main" // Main.java is located in src/main/java/Main.java
